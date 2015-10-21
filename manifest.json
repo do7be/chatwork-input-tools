@@ -1,0 +1,21 @@
+{
+    "manifest_version": 2,
+    "name": "Chatwork Input Tools",
+    "description": "チャットワークに[info]や[code]を入力するボタンを追加します。",
+    "version": "1",
+    "permissions": ["tabs"],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.chatwork.com/*",
+                "https://kcw.kddi.ne.jp/*"
+            ],
+            "include_globs": [
+                "https://www.chatwork.com/#!rid*",
+                "https://kcw.kddi.ne.jp/#!rid*"
+            ],
+            "js": ["script.js"],
+            "run_at": "document_end"
+        }
+    ]
+}
