@@ -1,7 +1,7 @@
-._chatSendTool_listItem{
+._chatSendTool_button{
     display: inline-block;
 }
-._chatSendTool_listItem_buttonGrayLarge{
+._chatSendTool_button_tagLarge{
     background-color: #444444;
     border-radius: 2px;
     color: #ffffff;
@@ -12,7 +12,7 @@
     text-align: center;
     width: 2.4em;
 }
-._chatSendTool_listItem_buttonGraySmall{
+._chatSendTool_button_tagSmall{
     background-color: #444444;
     border-radius: 3px;
     color: #ffffff;
@@ -23,7 +23,7 @@
     text-align: center;
     width: 1.2em;
 }
-._chatSendTool_listItem_buttonYellowLarge{
+._chatSendTool_button_emoticonLarge{
     background-color: #ffa000;
     border-radius: 3px;
     color: #ffffff;
