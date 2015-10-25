@@ -8,9 +8,8 @@
     display: inline-block;
     font-size: 12px;
     line-height: 16px;
-    padding: 0 5px;
     text-align: center;
-    width: 2.4em;
+    width: 38px;
 }
 ._chatSendTool_button_graySmall{
     background-color: #444444;
@@ -19,9 +18,8 @@
     display: inline-block;
     font-size: 12px;
     line-height: 16px;
-    padding: 0 5px;
     text-align: center;
-    width: 1.2em;
+    width: 19px;
 }
 ._chatSendTool_button_yellowLarge{
     background-color: #ffa000;
@@ -30,7 +28,6 @@
     display: inline-block;
     font-size: 12px;
     line-height: 16px;
-    padding: 0 5px;
     text-align: center;
-    width: 2.4em;
+    width: 38px;
 }
