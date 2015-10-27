@@ -1,7 +1,7 @@
-._chatSendTool_button{
+.__button{
     display: inline-block;
 }
-._chatSendTool_button_grayLarge{
+.__button_grayLarge{
     background-color: #444444;
     border-radius: 2px;
     color: #ffffff;
@@ -11,7 +11,7 @@
     text-align: center;
     width: 38px;
 }
-._chatSendTool_button_graySmall{
+.__button_graySmall{
     background-color: #444444;
     border-radius: 2px;
     color: #ffffff;
@@ -21,7 +21,7 @@
     text-align: center;
     width: 19px;
 }
-._chatSendTool_button_yellowLarge{
+.__button_yellowLarge{
     background-color: #ffa000;
     border-radius: 2px;
     color: #ffffff;
