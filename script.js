@@ -55,7 +55,7 @@
         pairTags.forEach(function(t){
             var tagOpen = t.tagOpen;
             var tagClose = t.tagClose;
-            document.getElementById(e.id).addEventListener('click', function(){
+            document.getElementById(t.id).addEventListener('click', function(){
                 self.chatText.focus();
                 var text = self.chatText.value;
                 var start = self.chatText.selectionStart;
@@ -88,7 +88,7 @@
         // 挿入
         unpairTags.forEach(function(t){
             var tag = t.tag;
-            document.getElementById(e.id).addEventListener('click', function(){
+            document.getElementById(t.id).addEventListener('click', function(){
                 self.chatText.focus();
                 var text = self.chatText.value;
                 var start = self.chatText.selectionStart;
