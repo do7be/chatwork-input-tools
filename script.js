@@ -1,94 +1,67 @@
 (function(global){
     'use strict';
 
-    // ボタン
-    var buttons = [
-        '<li id="__info" role="button" class="_showDescription __button" aria-label="info：選択したメッセージをinfoタグで囲みます"><span class="__button_grayLarge">info</span></li>',
-        '<li id="__title" role="button" class="_showDescription __button" aria-label="title：選択したメッセージをtitleタグで囲みます"><span class="__button_grayLarge">title</span></li>',
-        '<li id="__code" role="button" class="_showDescription __button" aria-label="code：選択したメッセージをcodeタグで囲みます"><span class="__button_grayLarge">code</span></li>',
-        '<li id="__hr" role="button" class="_showDescription __button" aria-label="hr：メッセージにhrタグを挿入します"><span class="__button_graySmall">hr</span></li>',
-        '<li id="__qt" role="button" class="_showDescription __button" aria-label="qt：メッセージにqtタグを挿入します"><span class="__button_graySmall">qt</span></li>',
-        '<li id="__bow" role="button" class="_showDescription __button" aria-label="bow：メッセージにおじぎエモーティコンを挿入します"><span class="__button_yellowLarge">bow</span></li>',
-        '<li id="__roger" role="button" class="_showDescription __button" aria-label="roger：メッセージに了解！エモーティコンを挿入します"><span class="__button_yellowLarge">roger</span></li>',
-    ].join('');
-
-    // DOMにボタンを追加
-    document.getElementById('_chatSendTool').insertAdjacentHTML('beforeend', buttons);
-
     var ButtonController = function(){
         var self = this;
 
         // テキストエリア
         self.chatText = document.getElementById('_chatText');
 
-        // 囲む系のタグ
-        var pairTags = [{
-            id: '__info',
-            tagOpen: '[info]',
-            tagClose: '[/info]'
-        }, {
-            id: '__title',
-            tagOpen: '[title]',
-            tagClose: '[/title]'
-        }, {
-            id: '__code',
-            tagOpen: '[code]',
-            tagClose: '[/code]'
-        }];
+        // ボタン
+        var buttons = [
+            '<li id="chatworkInputTools-info" role="button" class="_showDescription __button" aria-label="info：選択したメッセージをinfoタグで囲みます"><span class="__button_gray">info</span></li>',
+            '<li id="chatworkInputTools-title" role="button" class="_showDescription __button" aria-label="title：選択したメッセージをtitleタグで囲みます"><span class="__button_gray">title</span></li>',
+            '<li id="chatworkInputTools-code" role="button" class="_showDescription __button" aria-label="code：選択したメッセージをcodeタグで囲みます"><span class="__button_gray">code</span></li>',
+            '<li id="chatworkInputTools-hr" role="button" class="_showDescription __button" aria-label="hr：メッセージにhrタグを挿入します"><span class="__button_gray">hr</span></li>',
+            '<li id="chatworkInputTools-bow" role="button" class="_showDescription __button" aria-label="bow：メッセージにおじぎエモーティコンを挿入します"><span class="__button_yellow">bow</span></li>',
+            '<li id="chatworkInputTools-roger" role="button" class="_showDescription __button" aria-label="roger：メッセージに了解！エモーティコンを挿入します"><span class="__button_yellow">roger</span></li>',
+            '<li id="chatworkInputTools-cracker" role="button" class="_showDescription __button" aria-label="roger：メッセージにクラッカーエモーティコンを挿入します"><span class="__button_yellow">cracker</span></li>',
+        ].join('');
 
-        // 挿入するだけのタグ
-        var unpairTags = [{
-            id: '__hr',
-            tag: '[hr]'
-        }, {
-            id: '__qt',
-            tag: '[qt]'
-        }, {
-            id: '__bow',
-            tag: '(bow)'
-        }, {
-            id: '__roger',
-            tag: '(roger)'
-        }];
+        // ボタン追加
+        document.getElementById('_chatSendTool').insertAdjacentHTML('beforeend', buttons);
 
-        // 囲む
-        pairTags.forEach(function(t){
-            var tagOpen = t.tagOpen;
-            var tagClose = t.tagClose;
-            document.getElementById(t.id).addEventListener('click', function(){
+        // ハンドラ
+        var eventHandlers = {
+            'chatworkInputTools-info': enclose('[info]', '[/info]'),
+            'chatworkInputTools-title': enclose('[title]', '[/title]'),
+            'chatworkInputTools-code': enclose('[code]', '[/code]'),
+            'chatworkInputTools-hr': insert('[hr]'),
+            'chatworkInputTools-bow': insert('(bow)'),
+            'chatworkInputTools-roger': insert('(roger)'),
+            'chatworkInputTools-cracker': insert('(cracker)'),
+        };
+
+        // クリックイベント追加
+        Object.keys(eventHandlers).forEach(function(key){
+            var button = document.getElementById(key);
+            button.addEventListener('click', eventHandlers[key]);
+            button.removeAttribute('id');
+        });
+
+        // 選択テキストを囲む
+        function enclose(tagOpen, tagClose){
+            return function(){
                 self.chatText.focus();
                 var text = self.chatText.value;
                 var start = self.chatText.selectionStart;
                 var end = self.chatText.selectionEnd;
                 var caret = end;
-                if(start == end){
-                    // キャレットの位置にタグを挿入
-                    self.chatText.value = [
-                        text.substr(0, caret),
-                        tagOpen,
-                        tagClose,
-                        text.substr(caret, text.length),
-                    ].join('');
-                    caret += tagOpen.length;
-                }else{
-                    // 選択範囲のテキストをタグで囲む
-                    self.chatText.value = [
-                        text.substr(0, start),
-                        tagOpen,
-                        text.substr(start, end - start),
-                        tagClose,
-                        text.substr(end, text.length),
-                    ].join('');
-                    caret += tagOpen.length + tagClose.length;
-                }
+                caret += start == end ? tagOpen.length : tagOpen.length + tagClose.length;
+                self.chatText.value = [
+                    text.substr(0, start),
+                    tagOpen,
+                    text.substr(start, end - start),
+                    tagClose,
+                    text.substr(end, text.length),
+                ].join('');
                 self.chatText.setSelectionRange(caret, caret);
-            });
-        });
+            };
+        }
 
-        // 挿入
-        unpairTags.forEach(function(t){
-            var tag = t.tag;
-            document.getElementById(t.id).addEventListener('click', function(){
+        // 選択位置に挿入
+        function insert(tag){
+            return function(){
                 self.chatText.focus();
                 var text = self.chatText.value;
                 var start = self.chatText.selectionStart;
@@ -99,8 +72,8 @@
                     text.substr(start, text.length),
                 ].join('');
                 self.chatText.setSelectionRange(caret, caret);
-            });
-        });
+            };
+        }
     };
 
     new ButtonController();
