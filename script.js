@@ -16,30 +16,37 @@
     var buttons = [{
         'name': 'info',
         'listener': encloseText('[info]', '[/info]'),
+        'className': 'button-text-default',
         'ariaLabel': 'info：選択したメッセージをinfoタグで囲みます',
     }, {
         'name': 'title',
         'listener': encloseText('[title]', '[/title]'),
+        'className': 'button-text-default',
         'ariaLabel': 'title：選択したメッセージをtitleタグで囲みます',
     }, {
         'name': 'code',
         'listener': encloseText('[code]', '[/code]'),
+        'className': 'button-text-default',
         'ariaLabel': 'code：選択したメッセージをcodeタグで囲みます',
     }, {
         'name': 'hr',
         'listener': encloseText('[hr]'),
+        'className': 'button-text-default',
         'ariaLabel': 'hr：メッセージにhrタグを挿入します',
     }, {
         'name': 'bow',
         'listener': encloseText('(bow)'),
+        'className': 'button-text-default',
         'ariaLabel': 'bow：メッセージにおじぎエモーティコンを挿入します',
     }, {
         'name': 'roger',
         'listener': encloseText('(roger)'),
+        'className': 'button-text-default',
         'ariaLabel': 'roger：メッセージに了解！エモーティコンを挿入します',
     }, {
         'name': 'cracker',
         'listener': encloseText('(cracker)'),
+        'className': 'button-text-default',
         'ariaLabel': 'cracker：メッセージにクラッカーエモーティコンを挿入します',
     }];
 
@@ -70,7 +77,7 @@
     function createButtonElement(button){
         var textNode = document.createTextNode(button.name);
         var span = createElementWithAttribute('span', {
-            'class': button.className === undefined ? 'button-text-default' : button.className,
+            'class': button.className,
         });
         var div = createElementWithAttribute('div', {
             'class': 'button-trigger',
