@@ -1,7 +1,7 @@
-#_chatSendToolExtension .button-trigger{
+.chatSendToolExtension .button-trigger{
     display: inline-block;
 }
-#_chatSendToolExtension .button-text-default{
+.chatSendToolExtension .button-text-default{
     background-color: #444444;
     border-radius: 2px;
     border: none;

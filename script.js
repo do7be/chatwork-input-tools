@@ -9,36 +9,37 @@
     // ボタン格納先の要素を生成
     var chatSendToolExtension = createElementWithAttribute('ul', {
         'id': '_chatSendToolExtension',
+        'class': 'chatSendToolExtension',
     });
 
     // ボタン定義
     var buttons = [{
-        'listener': encloseText('[info]', '[/info]'),
         'name': 'info',
+        'listener': encloseText('[info]', '[/info]'),
         'ariaLabel': 'info：選択したメッセージをinfoタグで囲みます',
     }, {
-        'listener': encloseText('[title]', '[/title]'),
         'name': 'title',
+        'listener': encloseText('[title]', '[/title]'),
         'ariaLabel': 'title：選択したメッセージをtitleタグで囲みます',
     }, {
-        'listener': encloseText('[code]', '[/code]'),
         'name': 'code',
+        'listener': encloseText('[code]', '[/code]'),
         'ariaLabel': 'code：選択したメッセージをcodeタグで囲みます',
     }, {
-        'listener': encloseText('[hr]'),
         'name': 'hr',
+        'listener': encloseText('[hr]'),
         'ariaLabel': 'hr：メッセージにhrタグを挿入します',
     }, {
-        'listener': encloseText('(bow)'),
         'name': 'bow',
+        'listener': encloseText('(bow)'),
         'ariaLabel': 'bow：メッセージにおじぎエモーティコンを挿入します',
     }, {
-        'listener': encloseText('(roger)'),
         'name': 'roger',
+        'listener': encloseText('(roger)'),
         'ariaLabel': 'roger：メッセージに了解！エモーティコンを挿入します',
     }, {
-        'listener': encloseText('(cracker)'),
         'name': 'cracker',
+        'listener': encloseText('(cracker)'),
         'ariaLabel': 'cracker：メッセージにクラッカーエモーティコンを挿入します',
     }];
 
@@ -46,6 +47,11 @@
     buttons.forEach(function(button){
         chatSendToolExtension.appendChild(createButtonElement(button));
     });
+
+    // 追加ボタンを生成&格納
+    var newButton = createElementWithAttribute('li');
+    newButton.appendChild(document.createTextNode('+'));
+    chatSendToolExtension.appendChild(newButton);
 
     // 画面に反映
     chatSendToolbar.insertBefore(chatSendToolExtension, chatSendTool.nextSubling);
@@ -64,7 +70,7 @@
     function createButtonElement(button){
         var textNode = document.createTextNode(button.name);
         var span = createElementWithAttribute('span', {
-            'class': button.className === undefined ? 'button-text-default' : button.classNames,
+            'class': button.className === undefined ? 'button-text-default' : button.className,
         });
         var div = createElementWithAttribute('div', {
             'class': 'button-trigger',
@@ -90,14 +96,8 @@
             var text = chatText.value;
             var start = chatText.selectionStart;
             var end = chatText.selectionEnd;
-            var caret = start == end ? start + openingTag.length : end + openingTag.length + closingTag.length;
-            chatText.value = [
-                text.substr(0, start),
-                openingTag,
-                text.substr(start, end - start),
-                closingTag,
-                text.substr(end, text.length),
-            ].join('');
+            var caret = start == end || closingTag.length == 0 ? start + openingTag.length : end + openingTag.length + closingTag.length;
+            chatText.value = text.substr(0, start) + openingTag + text.substr(start, end - start) + closingTag + text.substr(end, text.length);
             chatText.setSelectionRange(caret, caret);
         };
     }
