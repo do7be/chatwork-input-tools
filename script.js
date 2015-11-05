@@ -1,111 +1,82 @@
 (function(global){
     'use strict';
 
-    // 要素取得
+    // ボタン格納先を作成
+    var chatSendToolExtension = document.createElement('ul');
+    chatSendToolExtension.setAttribute('class', 'chatSendToolExtension');
+
+    // ツールバー
     var chatSendToolbar = document.getElementById('_chatSendToolbar');
     var chatSendTool = document.getElementById('_chatSendTool');
-    var chatText = document.getElementById('_chatText');
 
-    // ボタン格納先の要素を生成
-    var chatSendToolExtension = createElementWithAttribute('ul', {
-        'id': '_chatSendToolExtension',
-        'class': 'chatSendToolExtension',
-    });
+    // ボタンクラス
+    var Button = function(name, description, openingTag, closingTag){
+        this.name = name || '';
+        this.description = description || '';
+        this.openingTag = openingTag || '';
+        this.closingTag = closingTag || '';
+    };
+    Button.prototype.chatText = document.getElementById('_chatText');
+    Button.prototype.createElement = function(){
+        var self = this;
+        var textNode = document.createTextNode(this.name);
+        var span = document.createElement('span');
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+        span.appendChild(textNode);
+        span.setAttribute('class', 'button-normal');
+        div.appendChild(span);
+        div.setAttribute('class', 'button-trigger');
+        div.addEventListener('click', function(){
+            self.chatText.focus();
+            var text = self.chatText.value;
+            var start = self.chatText.selectionStart;
+            var end = self.chatText.selectionEnd;
+            var caret = start == end || self.closingTag.length == 0 ? start + self.openingTag.length : end + self.openingTag.length + self.closingTag.length;
+            self.chatText.value = text.substr(0, start) + self.openingTag + text.substr(start, end - start) + self.closingTag + text.substr(end, text.length);
+            self.chatText.setSelectionRange(caret, caret);
+        })
+        li.appendChild(div);
+        li.setAttribute('role', 'button');
+        li.setAttribute('class', '_showDescription');
+        li.setAttribute('aria-label', this.description);
+        return li;
+    };
 
     // ボタン定義
     var buttons = [{
         'name': 'info',
-        'listener': encloseText('[info]', '[/info]'),
-        'className': 'button-text-default',
-        'ariaLabel': 'info：選択したメッセージをinfoタグで囲みます',
+        'description': 'info：選択したメッセージをinfoタグで囲みます',
+        'openingTag': '[info]',
+        'closingTag': '[/info]',
     }, {
         'name': 'title',
-        'listener': encloseText('[title]', '[/title]'),
-        'className': 'button-text-default',
-        'ariaLabel': 'title：選択したメッセージをtitleタグで囲みます',
+        'description': 'title：選択したメッセージをtitleタグで囲みます',
+        'openingTag': '[title]',
+        'closingTag': '[/title]',
     }, {
         'name': 'code',
-        'listener': encloseText('[code]', '[/code]'),
-        'className': 'button-text-default',
-        'ariaLabel': 'code：選択したメッセージをcodeタグで囲みます',
-    }, {
-        'name': 'hr',
-        'listener': encloseText('[hr]'),
-        'className': 'button-text-default',
-        'ariaLabel': 'hr：メッセージにhrタグを挿入します',
+        'description': 'code：選択したメッセージをcodeタグで囲みます',
+        'openingTag': '[code]',
+        'closingTag': '[/code]',
     }, {
         'name': 'bow',
-        'listener': encloseText('(bow)'),
-        'className': 'button-text-default',
-        'ariaLabel': 'bow：メッセージにおじぎエモーティコンを挿入します',
+        'description': 'bow：メッセージにおじぎエモーティコンを挿入します',
+        'openingTag': '(bow)',
+        'closingTag': '',
     }, {
         'name': 'roger',
-        'listener': encloseText('(roger)'),
-        'className': 'button-text-default',
-        'ariaLabel': 'roger：メッセージに了解！エモーティコンを挿入します',
-    }, {
-        'name': 'cracker',
-        'listener': encloseText('(cracker)'),
-        'className': 'button-text-default',
-        'ariaLabel': 'cracker：メッセージにクラッカーエモーティコンを挿入します',
+        'description': 'roger：メッセージに了解！エモーティコンを挿入します',
+        'openingTag': '(roger)',
+        'closingTag': '',
     }];
 
-    // ボタン要素を格納
+    // ボタンを作成
     buttons.forEach(function(button){
-        chatSendToolExtension.appendChild(createButtonElement(button));
+        var button = new Button(button.name, button.description, button.openingTag, button.closingTag);
+        chatSendToolExtension.appendChild(button.createElement());
     });
 
-    // 追加ボタンを生成&格納
-    var newButton = createElementWithAttribute('li');
-    newButton.appendChild(document.createTextNode('+'));
-    chatSendToolExtension.appendChild(newButton);
-
-    // 画面に反映
-    chatSendToolbar.insertBefore(chatSendToolExtension, chatSendTool.nextSubling);
-
-    // 要素作成&属性設定
-    function createElementWithAttribute(tagName, attributes){
-        var attributes = attributes === undefined ? {} : attributes;
-        var element = document.createElement(tagName);
-        Object.keys(attributes).forEach(function(name){
-            element.setAttribute(name, attributes[name]);
-        });
-        return element;
-    }
-
-    // ボタン要素を生成
-    function createButtonElement(button){
-        var textNode = document.createTextNode(button.name);
-        var span = createElementWithAttribute('span', {
-            'class': button.className,
-        });
-        var div = createElementWithAttribute('div', {
-            'class': 'button-trigger',
-        });
-        div.addEventListener('click', button.listener);
-        var li = createElementWithAttribute('li', {
-            'role': 'button',
-            'class': '_showDescription',
-            'aria-label': button.ariaLabel,
-        });
-        span.appendChild(textNode);
-        div.appendChild(span);
-        li.appendChild(div);
-        return li;
-    };
-
-    // 選択されたテキストを囲む
-    function encloseText(openingTag, closingTag){
-        openingTag = openingTag === undefined ? '' : openingTag;
-        closingTag = closingTag === undefined ? '' : closingTag;
-        return function(){
-            chatText.focus();
-            var text = chatText.value;
-            var start = chatText.selectionStart;
-            var end = chatText.selectionEnd;
-            var caret = start == end || closingTag.length == 0 ? start + openingTag.length : end + openingTag.length + closingTag.length;
-            chatText.value = text.substr(0, start) + openingTag + text.substr(start, end - start) + closingTag + text.substr(end, text.length);
-            chatText.setSelectionRange(caret, caret);
-        };
-    }
+    // ツールバーに追加
+    chatSendToolbar.appendChild(chatSendToolExtension);
 })(this);
