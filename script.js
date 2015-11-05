@@ -1,80 +1,82 @@
 (function(global){
     'use strict';
 
-    var ButtonController = function(){
+    // ボタン格納先を作成
+    var chatSendToolExtension = document.createElement('ul');
+    chatSendToolExtension.setAttribute('class', 'chatSendToolExtension');
+
+    // ツールバー
+    var chatSendToolbar = document.getElementById('_chatSendToolbar');
+    var chatSendTool = document.getElementById('_chatSendTool');
+
+    // ボタンクラス
+    var Button = function(name, description, openingTag, closingTag){
+        this.name = name || '';
+        this.description = description || '';
+        this.openingTag = openingTag || '';
+        this.closingTag = closingTag || '';
+    };
+    Button.prototype.chatText = document.getElementById('_chatText');
+    Button.prototype.createElement = function(){
         var self = this;
-
-        // テキストエリア
-        self.chatText = document.getElementById('_chatText');
-
-        // ボタン
-        var buttons = [
-            '<li id="chatworkInputTools-info" role="button" class="_showDescription __button" aria-label="info：選択したメッセージをinfoタグで囲みます"><span class="__button_gray">info</span></li>',
-            '<li id="chatworkInputTools-title" role="button" class="_showDescription __button" aria-label="title：選択したメッセージをtitleタグで囲みます"><span class="__button_gray">title</span></li>',
-            '<li id="chatworkInputTools-code" role="button" class="_showDescription __button" aria-label="code：選択したメッセージをcodeタグで囲みます"><span class="__button_gray">code</span></li>',
-            '<li id="chatworkInputTools-hr" role="button" class="_showDescription __button" aria-label="hr：メッセージにhrタグを挿入します"><span class="__button_gray">hr</span></li>',
-            '<li id="chatworkInputTools-bow" role="button" class="_showDescription __button" aria-label="bow：メッセージにおじぎエモーティコンを挿入します"><span class="__button_yellow">bow</span></li>',
-            '<li id="chatworkInputTools-roger" role="button" class="_showDescription __button" aria-label="roger：メッセージに了解！エモーティコンを挿入します"><span class="__button_yellow">roger</span></li>',
-            '<li id="chatworkInputTools-cracker" role="button" class="_showDescription __button" aria-label="roger：メッセージにクラッカーエモーティコンを挿入します"><span class="__button_yellow">cracker</span></li>',
-        ].join('');
-
-        // ボタン追加
-        document.getElementById('_chatSendTool').insertAdjacentHTML('beforeend', buttons);
-
-        // ハンドラ
-        var eventHandlers = {
-            'chatworkInputTools-info': enclose('[info]', '[/info]'),
-            'chatworkInputTools-title': enclose('[title]', '[/title]'),
-            'chatworkInputTools-code': enclose('[code]', '[/code]'),
-            'chatworkInputTools-hr': insert('[hr]'),
-            'chatworkInputTools-bow': insert('(bow)'),
-            'chatworkInputTools-roger': insert('(roger)'),
-            'chatworkInputTools-cracker': insert('(cracker)'),
-        };
-
-        // クリックイベント追加
-        Object.keys(eventHandlers).forEach(function(key){
-            var button = document.getElementById(key);
-            button.addEventListener('click', eventHandlers[key]);
-            button.removeAttribute('id');
-        });
-
-        // 選択テキストを囲む
-        function enclose(tagOpen, tagClose){
-            return function(){
-                self.chatText.focus();
-                var text = self.chatText.value;
-                var start = self.chatText.selectionStart;
-                var end = self.chatText.selectionEnd;
-                var caret = end;
-                caret += start == end ? tagOpen.length : tagOpen.length + tagClose.length;
-                self.chatText.value = [
-                    text.substr(0, start),
-                    tagOpen,
-                    text.substr(start, end - start),
-                    tagClose,
-                    text.substr(end, text.length),
-                ].join('');
-                self.chatText.setSelectionRange(caret, caret);
-            };
-        }
-
-        // 選択位置に挿入
-        function insert(tag){
-            return function(){
-                self.chatText.focus();
-                var text = self.chatText.value;
-                var start = self.chatText.selectionStart;
-                var caret = start + tag.length;
-                self.chatText.value = [
-                    text.substr(0, start),
-                    tag,
-                    text.substr(start, text.length),
-                ].join('');
-                self.chatText.setSelectionRange(caret, caret);
-            };
-        }
+        var textNode = document.createTextNode(this.name);
+        var span = document.createElement('span');
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+        span.appendChild(textNode);
+        span.setAttribute('class', 'button-normal');
+        div.appendChild(span);
+        div.setAttribute('class', 'button-trigger');
+        div.addEventListener('click', function(){
+            self.chatText.focus();
+            var text = self.chatText.value;
+            var start = self.chatText.selectionStart;
+            var end = self.chatText.selectionEnd;
+            var caret = start == end || self.closingTag.length == 0 ? start + self.openingTag.length : end + self.openingTag.length + self.closingTag.length;
+            self.chatText.value = text.substr(0, start) + self.openingTag + text.substr(start, end - start) + self.closingTag + text.substr(end, text.length);
+            self.chatText.setSelectionRange(caret, caret);
+        })
+        li.appendChild(div);
+        li.setAttribute('role', 'button');
+        li.setAttribute('class', '_showDescription');
+        li.setAttribute('aria-label', this.description);
+        return li;
     };
 
-    new ButtonController();
+    // ボタン定義
+    var buttons = [{
+        'name': 'info',
+        'description': 'info：選択したメッセージをinfoタグで囲みます',
+        'openingTag': '[info]',
+        'closingTag': '[/info]',
+    }, {
+        'name': 'title',
+        'description': 'title：選択したメッセージをtitleタグで囲みます',
+        'openingTag': '[title]',
+        'closingTag': '[/title]',
+    }, {
+        'name': 'code',
+        'description': 'code：選択したメッセージをcodeタグで囲みます',
+        'openingTag': '[code]',
+        'closingTag': '[/code]',
+    }, {
+        'name': 'bow',
+        'description': 'bow：メッセージにおじぎエモーティコンを挿入します',
+        'openingTag': '(bow)',
+        'closingTag': '',
+    }, {
+        'name': 'roger',
+        'description': 'roger：メッセージに了解！エモーティコンを挿入します',
+        'openingTag': '(roger)',
+        'closingTag': '',
+    }];
+
+    // ボタンを作成
+    buttons.forEach(function(button){
+        var button = new Button(button.name, button.description, button.openingTag, button.closingTag);
+        chatSendToolExtension.appendChild(button.createElement());
+    });
+
+    // ツールバーに追加
+    chatSendToolbar.appendChild(chatSendToolExtension);
 })(this);
