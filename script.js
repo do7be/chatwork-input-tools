@@ -3,6 +3,7 @@
 
     // ボタン格納先を作成
     var chatSendToolExtension = document.createElement('ul');
+    chatSendToolExtension.setAttribute('id', '_chatSendToolExtension');
     chatSendToolExtension.setAttribute('class', 'chatSendToolExtension');
 
     // ツールバー
@@ -16,8 +17,8 @@
         this.description = description || '';
         this.openingTag = openingTag || '';
         this.closingTag = closingTag || '';
-        this.textClassName = 'button-text';
-        this.triggerClassName = 'button-trigger';
+        this.textClassName = 'buttonText';
+        this.triggerClassName = 'buttonTrigger';
     };
     Button.prototype.chatText = document.getElementById('_chatText');
     Button.prototype.createElement = function(){
@@ -49,8 +50,8 @@
     // カスタムボタンクラス
     var CustomButton = function(){
         Button.apply(this, arguments);
-        this.textClassName = 'custom-button-text';
-        this.triggerClassName = 'custom-button-trigger';
+        this.textClassName = 'customButtonText';
+        this.triggerClassName = 'customButtonTrigger';
     };
     CustomButton.prototype = Object.create(Button.prototype);
     CustomButton.prototype.constructor = Button;
@@ -61,18 +62,136 @@
         var span = document.createElement('span');
         var div = document.createElement('div');
         span.appendChild(textNode);
-        span.setAttribute('class', 'delete-button-text');
+        span.setAttribute('class', 'deleteButtonText');
         div.appendChild(span);
-        div.setAttribute('class', 'delete-button-trigger')
-            div.addEventListener('dblclick', function(){
+        div.setAttribute('class', 'deleteButtonTrigger');
+        div.addEventListener('dblclick', function(){
+            chrome.storage.local.remove(self.id, function(){
                 li.parentNode.removeChild(li);
             });
+        });
         li.appendChild(div);
         return li;
     };
 
+    // カスタムボタン入力フォーム
+    var initializeCustomButtonForm = function(){
+        var title = document.createElement('div');
+        var nameInput = document.createElement('input');
+        var nameLabel = document.createElement('div');
+        var descriptionInput = document.createElement('input');
+        var descriptionLabel = document.createElement('div');
+        var openingTagInput = document.createElement('input');
+        var openingTagLabel = document.createElement('div');
+        var closingTagInput = document.createElement('input');
+        var closingTagLabel = document.createElement('div');
+        var submit = document.createElement('input');
+        var close = document.createElement('input');
+        var triangle = document.createElement('div');
+        var form = document.createElement('form');
+        title.appendChild(document.createTextNode('Custom Button'));
+        title.setAttribute('class', 'customButtonFormTitle');
+        nameInput.setAttribute('class', 'customButtonFormNameInput');
+        nameInput.setAttribute('type', 'text');
+        nameInput.setAttribute('placeholder', 'required');
+        nameLabel.appendChild(document.createTextNode('Name'));
+        nameLabel.setAttribute('class', 'customButtonFormNameLabel');
+        descriptionInput.setAttribute('class', 'customButtonFormDescriptionInput');
+        descriptionInput.setAttribute('type', 'text');
+        descriptionLabel.appendChild(document.createTextNode('Description'));
+        descriptionLabel.setAttribute('class', 'customButtonFormDescriptionLabel');
+        openingTagInput.setAttribute('class', 'customButtonFormOpeningTagInput');
+        openingTagInput.setAttribute('type', 'text');
+        openingTagInput.setAttribute('placeholder', 'required');
+        openingTagLabel.appendChild(document.createTextNode('Opening Tag'));
+        openingTagLabel.setAttribute('class', 'customButtonFormOpeningTagLabel');
+        closingTagInput.setAttribute('class', 'customButtonFormClosingTagInput');
+        closingTagInput.setAttribute('type', 'text');
+        closingTagLabel.appendChild(document.createTextNode('Closing Tag'));
+        closingTagLabel.setAttribute('class', 'customButtonFormClosingTagLabel');
+        submit.setAttribute('class', 'customButtonFormSubmit');
+        submit.setAttribute('type', 'submit');
+        submit.setAttribute('value', 'Add');
+        close.setAttribute('class', 'customButtonFormClose');
+        close.setAttribute('type', 'button');
+        close.setAttribute('value', 'x');
+        close.addEventListener('click', function(){
+            form.parentNode.removeChild(form);
+        });
+        triangle.setAttribute('class', 'customButtonFormTriangle');
+        form.setAttribute('id', '_customButtonForm');
+        form.setAttribute('class', 'customButtonForm');
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            if(nameInput.value.length == 0 || openingTagInput.value.length == 0){
+                return;
+            }
+            var data = {};
+            var id = 'button' + (new Date()).getTime();
+            var name = nameInput.value;
+            var description = descriptionInput.value;
+            var openingTag = openingTagInput.value;
+            var closingTag = closingTagInput.value;
+            data[id] = {
+                name: name,
+                description: description,
+                openingTag: openingTag,
+                closingTag: closingTag,
+            };
+            chrome.storage.local.set(data, function(){
+                var chatSendToolExtension = document.getElementById('_chatSendToolExtension');
+                var customButton = new CustomButton(id, name, description, openingTag, closingTag);
+                chatSendToolExtension.insertBefore(customButton.createElement(), document.getElementById('_addCustomButton'));
+                form.parentNode.removeChild(form);
+            });
+        });
+        form.appendChild(title);
+        form.appendChild(nameLabel);
+        form.appendChild(nameInput);
+        form.appendChild(descriptionLabel);
+        form.appendChild(descriptionInput);
+        form.appendChild(openingTagLabel);
+        form.appendChild(openingTagInput);
+        form.appendChild(closingTagLabel);
+        form.appendChild(closingTagInput);
+        form.appendChild(submit);
+        form.appendChild(close);
+        form.appendChild(triangle);
+        document.body.appendChild(form);
+        var chatSendArea = document.getElementById('_chatSendArea');
+        var addCustomButton = document.getElementById('_addCustomButton');
+        var formTop = chatSendArea.getBoundingClientRect().top - form.clientHeight;
+        var formLeft = addCustomButton.getBoundingClientRect().left + (addCustomButton.clientWidth / 2) - (form.clientWidth / 2);
+        form.style.top = formTop + 'px';
+        form.style.left = formLeft + 'px';
+        nameInput.focus();
+        var chatSendToolExtension = document.getElementById('_chatSendToolExtension');
+    };
+
+    // 入力フォーム表示ボタン
+    var addCustomButton = document.createElement('li');
+    var addCustomButtonText = document.createElement('span');
+    var addCustomButtonTrigger = document.createElement('div');
+    addCustomButtonText.appendChild(document.createTextNode('+'));
+    addCustomButtonText.setAttribute('class', 'addButtonText');
+    addCustomButtonTrigger.appendChild(addCustomButtonText);
+    addCustomButtonTrigger.setAttribute('class', 'addButtonTrigger');
+    addCustomButtonTrigger.addEventListener('click', function(){
+        var form = document.getElementById('_customButtonForm');
+        if(!!form){
+            return;
+        }
+        initializeCustomButtonForm();
+    });
+    addCustomButton.appendChild(addCustomButtonTrigger);
+    addCustomButton.setAttribute('class', '_showDescription');
+    addCustomButton.setAttribute('role', 'button');
+    addCustomButton.setAttribute('aria-label', '新しいボタンを追加します');
+    addCustomButton.setAttribute('id', '_addCustomButton');
+    chatSendToolExtension.appendChild(addCustomButton);
+
     // ボタン定義
-    var buttons = [{
+    var buttonParams = [{
         'name': 'info',
         'description': 'info：選択したメッセージをinfoタグで囲みます',
         'openingTag': '[info]',
@@ -100,9 +219,17 @@
     }];
 
     // ボタンを作成
-    buttons.forEach(function(button, index){
-        var button = new Button(index, button.name, button.description, button.openingTag, button.closingTag);
-        chatSendToolExtension.appendChild(button.createElement());
+    buttonParams.forEach(function(param, index){
+        var button = new Button(index, param.name, param.description, param.openingTag, param.closingTag);
+        chatSendToolExtension.insertBefore(button.createElement(), addCustomButton);
+    });
+
+    // カスタムボタンを作成
+    var customButtons = chrome.storage.local.get(function(result){
+        Object.keys(result).forEach(function(id){
+            var b = new CustomButton(id, result[id].name, result[id].description, result[id].openingTag, result[id].closingTag);
+            chatSendToolExtension.insertBefore(b.createElement(), addCustomButton);
+        });
     });
 
     // ツールバーに追加

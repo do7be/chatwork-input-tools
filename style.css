@@ -1,9 +1,11 @@
-.chatSendToolExtension .button-trigger,
-.chatSendToolExtension .custom-button-trigger,
-.chatSendToolExtension .delete-button-trigger{
+.chatSendToolExtension,
+.chatSendToolExtension .buttonTrigger,
+.chatSendToolExtension .customButtonTrigger,
+.chatSendToolExtension .deleteButtonTrigger,
+.chatSendToolExtension .addButtonTrigger{
     display: inline-block;
 }
-.chatSendToolExtension .button-text{
+.chatSendToolExtension .buttonText{
     background-color: #444444;
     border-radius: 2px;
     border: none;
@@ -18,7 +20,7 @@
     text-align: center;
     top: 1px;
 }
-.chatSendToolExtension .custom-button-text{
+.chatSendToolExtension .customButtonText{
     background-color: #444444;
     border-bottom-left-radius: 2px;
     border-top-left-radius: 2px;
@@ -34,7 +36,7 @@
     text-align: center;
     top: 1px;
 }
-.chatSendToolExtension .delete-button-text{
+.chatSendToolExtension .deleteButtonText{
     background-color: #771FE8;
     border-bottom-right-radius: 2px;
     border-top-right-radius: 2px;
@@ -50,4 +52,136 @@
     text-align: center;
     top: 1px;
     -webkit-user-select: none;
+}
+.chatSendToolExtension .addButtonText{
+    background-color: #ffffff;
+    border: none;
+    color: #000000;
+    display: inline-block;
+    font-size: 12px;
+    height: 16px;
+    line-height: 16px;
+    margin: 0;
+    padding: 0 4px;
+    position: relative;
+    text-align: center;
+    top: 1px;
+}
+.customButtonForm{
+    background-color: #444444;
+    border-radius: 4px;
+    color: #ffffff;
+    display: block;
+    height: 145px;
+    position: fixed;
+    top: 320px;
+    width: 250px;
+    z-index: 1000;
+}
+.customButtonForm .customButtonFormTitle{
+    left: 5px;
+    position: absolute;
+    top: 5px;
+}
+.customButtonForm .customButtonFormNameLabel{
+    font-size: 12px;
+    left: 5px;
+    line-height: 18px;
+    position: absolute;
+    top: 28px;
+}
+.customButtonForm .customButtonFormNameInput{
+    border: none;
+    display: block;
+    font-size: 12px;
+    left: 80px;
+    line-height: 16px;
+    padding: 0 3px;
+    position: absolute;
+    top: 28px;
+    width: 159px;
+}
+.customButtonForm .customButtonFormDescriptionLabel{
+    font-size: 12px;
+    left: 5px;
+    line-height: 18px;
+    position: absolute;
+    top: 51px;
+}
+.customButtonForm .customButtonFormDescriptionInput{
+    border: none;
+    display: block;
+    font-size: 12px;
+    left: 80px;
+    line-height: 16px;
+    padding: 0 3px;
+    position: absolute;
+    top: 51px;
+    width: 159px;
+}
+.customButtonForm .customButtonFormOpeningTagLabel{
+    font-size: 12px;
+    left: 5px;
+    line-height: 18px;
+    position: absolute;
+    top: 74px;
+}
+.customButtonForm .customButtonFormOpeningTagInput{
+    border: none;
+    display: block;
+    font-size: 12px;
+    left: 80px;
+    line-height: 16px;
+    padding: 0 3px;
+    position: absolute;
+    top: 74px;
+    width: 159px;
+}
+.customButtonForm .customButtonFormClosingTagLabel{
+    font-size: 12px;
+    left: 5px;
+    line-height: 18px;
+    position: absolute;
+    top: 97px;
+}
+.customButtonForm .customButtonFormClosingTagInput{
+    border: none;
+    display: block;
+    font-size: 12px;
+    left: 80px;
+    line-height: 16px;
+    padding: 0 3px;
+    position: absolute;
+    top: 97px;
+    width: 159px;
+}
+.customButtonForm .customButtonFormClose{
+    background-color: #444444;
+    border: none;
+    color: #ffffff;
+    font-size: 12px;
+    left: 227px;
+    line-height: 18px;
+    position: absolute;
+    top: 5px;
+}
+.customButtonForm .customButtonFormSubmit{
+    background-color: #444444;
+    border: none;
+    color: #ffffff;
+    font-size: 12px;
+    left: 211px;
+    line-height: 18px;
+    position: absolute;
+    top: 120px;
+}
+.customButtonForm .customButtonFormTriangle{
+    border-color: #444444 transparent transparent transparent;
+    border-style: solid;
+    border-width: 7px 7px 0 7px;
+    bottom: -7px;
+    height: 0;
+    left: 118px;
+    position: absolute;
+    width: 0;
 }
