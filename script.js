@@ -1,14 +1,12 @@
-(function(global){
+(function(global, $){
     'use strict';
 
     // ボタン格納先を作成
-    var chatSendToolExtension = document.createElement('ul');
-    chatSendToolExtension.setAttribute('id', '_chatSendToolExtension');
-    chatSendToolExtension.setAttribute('class', 'chatSendToolExtension');
+    var chatSendToolExtension = $('<ul></ul').attr('id', '_chatSendToolExtension').addClass('chatSendToolExtension');
 
     // ツールバー
-    var chatSendToolbar = document.getElementById('_chatSendToolbar');
-    var chatSendTool = document.getElementById('_chatSendTool');
+    var chatSendToolbar = $('_chatSendToolbar');
+    var chatSendTool = $('_chatSendTool');
 
     // ボタンクラス
     var Button = function(id, name, description, openingTag, closingTag){
@@ -20,30 +18,25 @@
         this.textClassName = 'buttonText';
         this.triggerClassName = 'buttonTrigger';
     };
-    Button.prototype.chatText = document.getElementById('_chatText');
+    Button.prototype.chatText = $('_chatText');
     Button.prototype.createElement = function(){
         var self = this;
-        var textNode = document.createTextNode(this.name);
-        var span = document.createElement('span');
-        var div = document.createElement('div');
-        var li = document.createElement('li');
-        span.appendChild(textNode);
-        span.setAttribute('class', this.textClassName);
-        div.appendChild(span);
-        div.setAttribute('class', this.triggerClassName);
-        div.addEventListener('click', function(){
+        var span = $('<span></span>').text(this.name).addClass(this.textClassName);
+        var div = $('<div></div>').addClass(this.triggerClassName).append(span);
+        div.on('click', function(){
             self.chatText.focus();
-            var text = self.chatText.value;
+            var rawText = self.chatText.val();
             var start = self.chatText.selectionStart;
             var end = self.chatText.selectionEnd;
             var caret = start == end || self.closingTag.length == 0 ? start + self.openingTag.length : end + self.openingTag.length + self.closingTag.length;
-            self.chatText.value = text.substr(0, start) + self.openingTag + text.substr(start, end - start) + self.closingTag + text.substr(end, text.length);
+            var text = rawText.substr(0, start) + self.openingTag + rawText.substr(start, end - start) + self.closingTag + rawText.substr(end, rawText.length)
+            self.chatText.val(text);
             self.chatText.setSelectionRange(caret, caret);
         })
-        li.appendChild(div);
-        li.setAttribute('role', 'button');
-        li.setAttribute('class', '_showDescription');
-        li.setAttribute('aria-label', this.description);
+        var li = $('<li></li').addClass('_showDescription').attr({
+            'role': 'button',
+            'aria-label': this.description,
+        }).append(div);
         return li;
     };
 
@@ -58,19 +51,14 @@
     CustomButton.prototype.createElement = function(){
         var self = this;
         var li = Button.prototype.createElement.call(this);
-        var textNode = document.createTextNode('x');
-        var span = document.createElement('span');
-        var div = document.createElement('div');
-        span.appendChild(textNode);
-        span.setAttribute('class', 'deleteButtonText');
-        div.appendChild(span);
-        div.setAttribute('class', 'deleteButtonTrigger');
-        div.addEventListener('dblclick', function(){
+        var span = $('<span></span>').text('x').addClass('deleteButtonText');
+        var div = $('<div></div>').addClass('deleteButtonTrigger').append(span);
+        div.on('dblclick', function(){
             chrome.storage.local.remove(self.id, function(){
                 li.parentNode.removeChild(li);
             });
         });
-        li.appendChild(div);
+        li.append(div);
         return li;
     };
 
@@ -234,4 +222,4 @@
 
     // ツールバーに追加
     chatSendToolbar.appendChild(chatSendToolExtension);
-})(this);
+})(this, $);
