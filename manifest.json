@@ -6,7 +6,8 @@
     "permissions": [
         "tabs",
         "https://www.chatwork.com/*",
-        "https://kcw.kddi.ne.jp/*"
+        "https://kcw.kddi.ne.jp/*",
+        "storage"
     ],
     "content_scripts": [
         {
