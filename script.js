@@ -11,25 +11,35 @@
     var chatSendTool = document.getElementById('_chatSendTool');
 
     // ボタンクラス
-    var Button = function(id, name, description, openingTag, closingTag){
+    var Button = function(id, name, description, openingTag, closingTag, imageUrl){
         this.id = id;
         this.name = name || '';
         this.description = description || '';
         this.openingTag = openingTag || '';
         this.closingTag = closingTag || '';
+        this.imageUrl = imageUrl || '';
         this.textClassName = 'buttonText';
+        this.emoticonClassName = 'buttonEmoticon';
         this.triggerClassName = 'buttonTrigger';
     };
     Button.prototype.chatText = document.getElementById('_chatText');
     Button.prototype.createElement = function(){
         var self = this;
         var textNode = document.createTextNode(this.name);
-        var span = document.createElement('span');
         var div = document.createElement('div');
         var li = document.createElement('li');
-        span.appendChild(textNode);
-        span.setAttribute('class', this.textClassName);
-        div.appendChild(span);
+        if (this.imageUrl !== '') {
+            // 絵文字ボタンの場合
+            var img = document.createElement('img');
+            img.setAttribute('class', this.emoticonClassName);
+            img.setAttribute('src', this.imageUrl);
+            div.appendChild(img);
+        } else {
+            var span = document.createElement('span');
+            span.appendChild(textNode);
+            span.setAttribute('class', this.textClassName);
+            div.appendChild(span);
+        }
         div.setAttribute('class', this.triggerClassName);
         div.addEventListener('click', function(){
             self.chatText.focus();
@@ -85,6 +95,8 @@
         var openingTagLabel = document.createElement('div');
         var closingTagInput = document.createElement('input');
         var closingTagLabel = document.createElement('div');
+        var imageUrlInput = document.createElement('input');
+        var imageUrlLabel = document.createElement('div');
         var submit = document.createElement('input');
         var close = document.createElement('input');
         var triangle = document.createElement('div');
@@ -109,6 +121,10 @@
         closingTagInput.setAttribute('type', 'text');
         closingTagLabel.appendChild(document.createTextNode('Closing Tag'));
         closingTagLabel.setAttribute('class', 'customButtonFormClosingTagLabel');
+        imageUrlInput.setAttribute('class', 'customButtonFormImageUrlInput');
+        imageUrlInput.setAttribute('type', 'text');
+        imageUrlLabel.appendChild(document.createTextNode('Image URL'));
+        imageUrlLabel.setAttribute('class', 'customButtonFormImageUrlLabel');
         submit.setAttribute('class', 'customButtonFormSubmit');
         submit.setAttribute('type', 'submit');
         submit.setAttribute('value', 'Add');
@@ -132,15 +148,17 @@
             var description = descriptionInput.value;
             var openingTag = openingTagInput.value;
             var closingTag = closingTagInput.value;
+            var imageUrl = imageUrlInput.value;
             data[id] = {
                 name: name,
                 description: description,
                 openingTag: openingTag,
                 closingTag: closingTag,
+                imageUrl: imageUrl,
             };
             chrome.storage.local.set(data, function(){
                 var chatSendToolExtension = document.getElementById('_chatSendToolExtension');
-                var customButton = new CustomButton(id, name, description, openingTag, closingTag);
+                var customButton = new CustomButton(id, name, description, openingTag, closingTag, imageUrl);
                 chatSendToolExtension.insertBefore(customButton.createElement(), document.getElementById('_addCustomButton'));
                 form.parentNode.removeChild(form);
             });
@@ -154,6 +172,8 @@
         form.appendChild(openingTagInput);
         form.appendChild(closingTagLabel);
         form.appendChild(closingTagInput);
+        form.appendChild(imageUrlLabel);
+        form.appendChild(imageUrlInput);
         form.appendChild(submit);
         form.appendChild(close);
         form.appendChild(triangle);
@@ -196,38 +216,43 @@
         'description': 'info：選択したメッセージをinfoタグで囲みます',
         'openingTag': '[info]',
         'closingTag': '[/info]',
+        'imageUrl': '',
     }, {
         'name': 'title',
         'description': 'title：選択したメッセージをtitleタグで囲みます',
         'openingTag': '[title]',
         'closingTag': '[/title]',
+        'imageUrl': '',
     }, {
         'name': 'code',
         'description': 'code：選択したメッセージをcodeタグで囲みます',
         'openingTag': '[code]',
         'closingTag': '[/code]',
+        'imageUrl': '',
     }, {
         'name': 'bow',
         'description': 'bow：メッセージにおじぎエモーティコンを挿入します',
         'openingTag': '(bow)',
         'closingTag': '',
+        'imageUrl': '',
     }, {
         'name': 'roger',
         'description': 'roger：メッセージに了解！エモーティコンを挿入します',
         'openingTag': '(roger)',
         'closingTag': '',
+        'imageUrl': '',
     }];
 
     // ボタンを作成
     buttonParams.forEach(function(param, index){
-        var button = new Button(index, param.name, param.description, param.openingTag, param.closingTag);
+        var button = new Button(index, param.name, param.description, param.openingTag, param.closingTag, param.imageUrl);
         chatSendToolExtension.insertBefore(button.createElement(), addCustomButton);
     });
 
     // カスタムボタンを作成
     var customButtons = chrome.storage.local.get(function(result){
         Object.keys(result).forEach(function(id){
-            var b = new CustomButton(id, result[id].name, result[id].description, result[id].openingTag, result[id].closingTag);
+            var b = new CustomButton(id, result[id].name, result[id].description, result[id].openingTag, result[id].closingTag, result[id].imageUrl);
             chatSendToolExtension.insertBefore(b.createElement(), addCustomButton);
         });
     });
