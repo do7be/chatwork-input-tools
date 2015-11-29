@@ -98,6 +98,7 @@
         var imageUrlInput = document.createElement('input');
         var imageUrlLabel = document.createElement('div');
         var submit = document.createElement('input');
+        var selector = document.createElement('div');
         var close = document.createElement('input');
         var triangle = document.createElement('div');
         var form = document.createElement('form');
@@ -128,6 +129,53 @@
         submit.setAttribute('class', 'customButtonFormSubmit');
         submit.setAttribute('type', 'submit');
         submit.setAttribute('value', 'Add');
+        selector.setAttribute('class', 'customButtonFormSelector icoFontEmoticon icoSizeLarge');
+        selector.setAttribute('value', '');
+        selector.addEventListener('click', function(){
+            var emoticonSelector = document.getElementById('emoticonListCustomSelector');
+            if(!!emoticonSelector){
+                // エモーティコンリストボックスがすでに存在する場合は閉じる
+                emoticonSelector.parentNode.removeChild(emoticonSelector);
+                return;
+            }
+
+            // エモーティコンのリストボックスの親要素をCloneする
+            var emoticonList = document.getElementById('_emoticonList').cloneNode(false);
+            emoticonList.id = 'emoticonListCustomSelector';
+            emoticonList.classList.add('toolTip');
+            emoticonList.classList.add('toolTipWhite');
+            emoticonList.classList.add('mainContetTooltip');
+            emoticonList.setAttribute('style', 'display: block;');
+
+            // エモーティコンのリストボックスをCloneする
+            var emoticonGallery = document.getElementById('_emoticonGallery').cloneNode(true);
+            emoticonGallery.id = 'emoticonGalleryCustomSelector';
+
+            emoticonList.appendChild(emoticonGallery);
+
+            // エモーティコンをクリックした際の動作
+            var emoticonListObject = emoticonList.querySelectorAll('li');
+            Array.prototype.forEach.call(emoticonListObject, function(el, index) {
+                el.addEventListener('click', function() {
+                    // エモーティコンの情報をカスタムタグ入力フォームに埋め込む
+                    var url = el.getElementsByTagName('img')[0].src;
+                    var tag = el.getElementsByTagName('img')[0].alt;
+                    nameInput.value = tag;
+                    openingTagInput.value = tag;
+                    imageUrlInput.value = url;
+
+                    // エモーティコンリストを閉じる
+                    document.body.removeChild(document.getElementById('emoticonListCustomSelector'));
+                });
+            });
+            document.body.appendChild(emoticonList);
+
+            // エモーティコンのボックスの位置調節
+            var emoticonListTop = form.getBoundingClientRect().top - 193;
+            var emoticonListLeft = addCustomButton.getBoundingClientRect().left + (addCustomButton.clientWidth / 2) - (emoticonList.clientWidth / 2);
+            emoticonList.style.top = emoticonListTop + 'px';
+            emoticonList.style.left = emoticonListLeft + 'px';
+        });
         close.setAttribute('class', 'customButtonFormClose');
         close.setAttribute('type', 'button');
         close.setAttribute('value', 'x');
@@ -175,6 +223,7 @@
         form.appendChild(imageUrlLabel);
         form.appendChild(imageUrlInput);
         form.appendChild(submit);
+        form.appendChild(selector);
         form.appendChild(close);
         form.appendChild(triangle);
         document.body.appendChild(form);
